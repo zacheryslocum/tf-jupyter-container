@@ -4,7 +4,7 @@ services:
 #    image: tensorflow/tensorflow:nightly-py3-jupyter
     image: tensorflow/tensorflow:1.15.0-gpu-py3-jupyter
 #    image: tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
-    container_name: deephyd_tboard
+    container_name: tboard
     restart: always
     init: true
     ports: 
@@ -23,7 +23,7 @@ services:
 #    image: tensorflow/tensorflow:nightly-py3-jupyter
 #    image: tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
     image: tensorflow/tensorflow:1.15.0-gpu-py3-jupyter
-    container_name: deephyd_tfjupyter
+    container_name: tfjupyter
     restart: always
     init: true
     ports:
