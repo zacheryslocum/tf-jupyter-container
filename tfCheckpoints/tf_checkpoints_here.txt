@@ -1,0 +1,1 @@
+This folder is dedicated to isolating the large checkpoints created while training a model in TensorFlow.

@@ -1,0 +1,5 @@
+/jn-config/pipcache
+*.h5
+events.out.tfevents*
+*.pyc
+/keep-results
