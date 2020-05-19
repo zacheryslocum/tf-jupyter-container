@@ -1,11 +1,9 @@
 version: "3.7"
 services:
-  deephyd_tboard:
-#    image: tensorflow/tensorflow:nightly-py3-jupyter
-    image: tensorflow/tensorflow:1.15.0-gpu-py3-jupyter
-#    image: tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
+  tboard:
+    image: tensorflow/tensorflow:1.15.2-gpu-py3-jupyter
     container_name: tboard
-    restart: always
+    restart: unless-stopped
     init: true
     ports: 
       - "8686:8686"
@@ -13,18 +11,13 @@ services:
     - ./tfCheckpoints:/tfCheckpoints
     command: >
       bash -c "source /etc/bash.bashrc &&
-               apt update &&
-               # Fix for opencv-python
-               apt install libglib2.0-0 libsm6 libxrender1 libfontconfig1 -y &&
                # Launch tensorboard
                tensorboard --logdir="/tfCheckpoints" --port 8686"
 
-  deephyd_tfjupyter:
-#    image: tensorflow/tensorflow:nightly-py3-jupyter
-#    image: tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
-    image: tensorflow/tensorflow:1.15.0-gpu-py3-jupyter
+  tfjupyter:
+    image: tensorflow/tensorflow:1.15.2-gpu-py3-jupyter
     container_name: tfjupyter
-    restart: always
+    restart: unless-stopped
     init: true
     ports:
       - "8484:8484"
@@ -38,19 +31,19 @@ services:
     # Configuration files for jupyter notebook (Read Only)
     - ./jn-config:/tf/jn-config:ro
     # Cache PIP packages to speed up deployment (Read/Write)
-    #- ./jn-config/pipcache:/pipcache:rw
+    - ./jn-config/pipcache:/pipcache:rw
     # Startup command using bash
     command: >
       bash -c "source /etc/bash.bashrc &&
-               apt update && 
-               # Fix for opencv-python, Install git to pull COCO from github
-               apt install libglib2.0-0 libsm6 libxrender1 libfontconfig1 git -y &&
+               # Upgrade pip and add git support
+               pip install --upgrade pip &&
+               apt update && apt install git -y &&
                # Fix pip cache
                mkdir -p /pipcache && chown root:root -R /pipcache && chmod 775 -R /pipcache &&
                # Install MS COCO dependences, often used packages, then the COCO API
-               python3 -m pip install Cython numpy Shapely pytesseract simplekml pyautogui requests psutil scipy Pillow scikit-image keras opencv-python h5py imgaug ipynb jupyter_contrib_nbextensions beautifulsoup4 --cache-dir /pipcache &&
+               python3 -m pip install Cython numpy Shapely pytesseract simplekml requests psutil scipy Pillow scikit-image opencv-python h5py imgaug ipynb jupyter_contrib_nbextensions beautifulsoup4 --cache-dir /pipcache &&
                python3 -m pip install git+https://github.com/philferriere/cocoapi.git#subdirectory=PythonAPI --cache-dir /pipcache &&
                # Fix Keras version, see https://github.com/matterport/Mask_RCNN/issues/1754
-               pip3 install keras==2.2.5 &&
+               #python3 -m pip install keras==2.2.5 &&
                # Launch the jupyter notebook last to incorporate pip installs above
                jupyter notebook --config /tf/jn-config/jupyter_notebook_config.py"
