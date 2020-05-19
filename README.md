@@ -9,4 +9,4 @@ Install:
 
 Access the containers:
 - TensorBoard http://localhost:8686
-- Jupyter https://localhost:8484
+- Jupyter https://localhost:8484 (Password: docker)
